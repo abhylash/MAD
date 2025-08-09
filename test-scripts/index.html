@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSpendr Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .test-card h3 {
+            margin: 0 0 10px 0;
+            color: #5a67d8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-card p {
+            margin: 0 0 15px 0;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-large {
+            font-size: 18px;
+            padding: 15px 30px;
+            margin: 20px 10px;
+        }
+        
+        .console-output {
+            background: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        
+        .status-indicators {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .status-indicator {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            font-weight: bold;
+        }
+        
+        .status-ready { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .status-running { background: #fff3cd; border-color: #ffeaa7; color: #856404; }
+        .status-complete { background: #d1ecf1; border-color: #b8daff; color: #0c5460; }
+        .status-error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        
+        .instructions {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="emoji">🧪</span> SmartSpendr Test Suite</h1>
+            <p>Comprehensive testing framework for the expense tracking application</p>
+        </div>
+        
+        <div class="content">
+            <div class="status-indicators">
+                <div class="status-indicator status-ready" id="status">
+                    <span class="emoji">✅</span> Ready to Test
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div class="instructions">
+                <h4><span class="emoji">📋</span> Quick Start Instructions</h4>
+                <ol>
+                    <li>Open browser developer tools (F12)</li>
+                    <li>Navigate to the Console tab</li>
+                    <li>Click "Run All Tests" below or run individual test suites</li>
+                    <li>Monitor the console for detailed test results</li>
+                    <li>Export results when testing is complete</li>
+                </ol>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <button class="btn btn-large btn-success" onclick="runAllTests()">
+                    <span class="emoji">🚀</span> Run All Tests
+                </button>
+                <button class="btn btn-large btn-secondary" onclick="clearConsole()">
+                    <span class="emoji">🧹</span> Clear Console
+                </button>
+            </div>
+            
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>
+                        <span class="emoji">🔐</span>
+                        Authentication Tests
+                    </h3>
+                    <p>Test Google OAuth login, logout, session persistence, and security features.</p>
+                    <button class="btn" onclick="runAuthTests()">Run Auth Tests</button>
+                    <button class="btn btn-secondary" onclick="showAuthInstructions()">Manual Tests</button>
+                </div>
+                
+                <div class="test-card">
+                    <h3>
+                        <span class="emoji">💰</span>
+                        Expense Management
+                    </h3>
+                    <p>Test expense CRUD operations, form validation, and offline functionality.</p>
+                    <button class="btn" onclick="runExpenseTests()">Run Expense Tests</button>
+                    <button class="btn btn-secondary" onclick="showExpenseInstructions()">Manual Tests</button>
+                </div>
+                
+                <div class="test-card">
+                    <h3>
+                        <span class="emoji">📱</span>
+                        PWA Features
+                    </h3>
+                    <p>Test progressive web app installation, offline behavior, and service workers.</p>
+                    <button class="btn" onclick="runPWATests()">Run PWA Tests</button>
+                    <button class="btn btn-secondary" onclick="showPWAInstructions()">Manual Tests</button>
+                </div>
+                
+                <div class="test-card">
+                    <h3>
+                        <span class="emoji">📊</span>
+                        Performance & Accessibility
+                    </h3>
+                    <p>Test loading times, keyboard navigation, screen reader support, and more.</p>
+                    <button class="btn" onclick="runPerformanceTests()">Run Tests</button>
+                    <button class="btn btn-secondary" onclick="showA11yInstructions()">Manual Tests</button>
+                </div>
+                
+                <div class="test-card">
+                    <h3>
+                        <span class="emoji">🌐</span>
+                        Cross-Browser Testing
+                    </h3>
+                    <p>Test compatibility across different browsers and devices.</p>
+                    <button class="btn" onclick="runBrowserTests()">Run Tests</button>
+                    <button class="btn btn-secondary" onclick="showBrowserInstructions()">Manual Tests</button>
+                </div>
+                
+                <div class="test-card">
+                    <h3>
+                        <span class="emoji">📈</span>
+                        Export Results
+                    </h3>
+                    <p>Download test results as JSON or generate HTML reports.</p>
+                    <button class="btn" onclick="downloadResults()">Download JSON</button>
+                    <button class="btn btn-secondary" onclick="generateReport()">HTML Report</button>
+                </div>
+            </div>
+            
+            <div id="console-output" class="console-output" style="display: none;">
+                <div id="console-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testStatus = 'ready';
+        let currentProgress = 0;
+        let consoleOutput = [];
+        
+        // Override console.log to capture output
+        const originalConsoleLog = console.log;
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            appendToConsole(args.join(' '));
+        };
+        
+        function appendToConsole(message) {
+            consoleOutput.push(message);
+            const consoleDiv = document.getElementById('console-content');
+            if (consoleDiv) {
+                consoleDiv.textContent = consoleOutput.join('\n');
+                const consoleContainer = document.getElementById('console-output');
+                consoleContainer.scrollTop = consoleContainer.scrollHeight;
+            }
+        }
+        
+        function updateStatus(status, message) {
+            testStatus = status;
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status-indicator status-${status}`;
+            
+            const statusMessages = {
+                ready: '✅ Ready to Test',
+                running: '⏳ Running Tests...',
+                complete: '🎉 Tests Complete',
+                error: '❌ Error Occurred'
+            };
+            
+            statusEl.innerHTML = `<span class="emoji">${statusMessages[status].split(' ')[0]}</span> ${message || statusMessages[status].substring(2)}`;
+        }
+        
+        function updateProgress(percent) {
+            currentProgress = percent;
+            document.getElementById('progress').style.width = `${percent}%`;
+        }
+        
+        function showConsole() {
+            document.getElementById('console-output').style.display = 'block';
+        }
+        
+        function clearConsole() {
+            consoleOutput = [];
+            const consoleContent = document.getElementById('console-content');
+            if (consoleContent) {
+                consoleContent.textContent = '';
+            }
+            originalConsoleLog.clear();
+        }
+        
+        async function runAllTests() {
+            updateStatus('running', 'Initializing comprehensive test suite...');
+            updateProgress(0);
+            showConsole();
+            
+            try {
+                // Load test scripts if not already loaded
+                await loadTestScripts();
+                
+                updateProgress(10);
+                console.log('🚀 Starting SmartSpendr Comprehensive Testing Suite');
+                console.log('=' .repeat(60));
+                
+                // Create and run master test runner
+                const masterRunner = new MasterTestRunner();
+                await masterRunner.runAllTestSuites();
+                
+                updateProgress(100);
+                updateStatus('complete', 'All tests completed successfully!');
+                
+            } catch (error) {
+                console.error('❌ Error running tests:', error);
+                updateStatus('error', `Test execution failed: ${error.message}`);
+            }
+        }
+        
+        async function runAuthTests() {
+            updateStatus('running', 'Running authentication tests...');
+            showConsole();
+            
+            try {
+                await loadTestScripts();
+                const authTests = new AuthTestSuite();
+                await authTests.runAllTests();
+                updateStatus('complete', 'Authentication tests completed');
+            } catch (error) {
+                console.error('Error running auth tests:', error);
+                updateStatus('error', 'Authentication tests failed');
+            }
+        }
+        
+        async function runExpenseTests() {
+            updateStatus('running', 'Running expense management tests...');
+            showConsole();
+            
+            try {
+                await loadTestScripts();
+                const expenseTests = new ExpenseTestSuite();
+                await expenseTests.runAllTests();
+                updateStatus('complete', 'Expense tests completed');
+            } catch (error) {
+                console.error('Error running expense tests:', error);
+                updateStatus('error', 'Expense tests failed');
+            }
+        }
+        
+        async function runPWATests() {
+            updateStatus('running', 'Running PWA tests...');
+            showConsole();
+            
+            try {
+                await loadTestScripts();
+                const pwaTests = new PWATestSuite();
+                await pwaTests.runAllTests();
+                updateStatus('complete', 'PWA tests completed');
+            } catch (error) {
+                console.error('Error running PWA tests:', error);
+                updateStatus('error', 'PWA tests failed');
+            }
+        }
+        
+        function runPerformanceTests() {
+            updateStatus('running', 'Running performance tests...');
+            showConsole();
+            
+            console.log('📊 Performance & Accessibility Tests');
+            console.log('Run these tests manually:');
+            console.log('1. Lighthouse audit (Performance, Accessibility, Best Practices)');
+            console.log('2. Screen reader testing (NVDA, JAWS, VoiceOver)');
+            console.log('3. Keyboard navigation testing');
+            console.log('4. Network throttling tests');
+            
+            updateStatus('complete', 'Check console for manual test instructions');
+        }
+        
+        function runBrowserTests() {
+            updateStatus('running', 'Running cross-browser tests...');
+            showConsole();
+            
+            console.log('🌐 Cross-Browser Testing Checklist');
+            console.log('Test the application in:');
+            console.log('• Chrome (latest)');
+            console.log('• Firefox (latest)');
+            console.log('• Safari (latest)');
+            console.log('• Edge (latest)');
+            console.log('• Mobile Safari (iOS)');
+            console.log('• Chrome Mobile (Android)');
+            
+            updateStatus('complete', 'Check console for browser testing checklist');
+        }
+        
+        function downloadResults() {
+            if (typeof downloadTestResults === 'function') {
+                downloadTestResults();
+            } else {
+                console.log('No test results available. Run tests first.');
+            }
+        }
+        
+        function generateReport() {
+            if (typeof generateHTMLReport === 'function') {
+                generateHTMLReport();
+            } else {
+                console.log('No test results available. Run tests first.');
+            }
+        }
+        
+        function showAuthInstructions() {
+            showConsole();
+            console.log(MANUAL_TEST_INSTRUCTIONS || 'Manual test instructions not loaded');
+        }
+        
+        function showExpenseInstructions() {
+            showConsole();
+            console.log(MANUAL_EXPENSE_TEST_INSTRUCTIONS || 'Expense test instructions not loaded');
+        }
+        
+        function showPWAInstructions() {
+            showConsole();
+            console.log(MANUAL_PWA_TEST_INSTRUCTIONS || 'PWA test instructions not loaded');
+        }
+        
+        function showA11yInstructions() {
+            showConsole();
+            console.log(`
+🧪 ACCESSIBILITY & PERFORMANCE MANUAL TESTS
+==========================================
+
+1. KEYBOARD NAVIGATION:
+   • Tab through all interactive elements
+   • Use Enter/Space to activate buttons
+   • Test Escape key functionality
+   • Verify focus indicators are visible
+
+2. SCREEN READER TESTING:
+   • Install NVDA (Windows) or VoiceOver (Mac)
+   • Navigate through the app using screen reader
+   • Verify all content is announced correctly
+   • Check form labels and error messages
+
+3. PERFORMANCE TESTING:
+   • Run Lighthouse audit in Chrome DevTools
+   • Test on slow 3G network
+   • Measure loading times
+   • Check bundle size and optimization
+
+4. RESPONSIVE DESIGN:
+   • Test on mobile (320px)
+   • Test on tablet (768px)
+   • Test on desktop (1024px+)
+   • Check touch targets are 44px+
+            `);
+        }
+        
+        function showBrowserInstructions() {
+            showConsole();
+            console.log(`
+🌐 CROSS-BROWSER TESTING MANUAL CHECKLIST
+=========================================
+
+1. DESKTOP BROWSERS:
+   □ Chrome (latest) - Full feature testing
+   □ Firefox (latest) - Check CSS compatibility
+   □ Safari (latest) - Test WebKit specific features
+   □ Edge (latest) - Verify Chromium compatibility
+
+2. MOBILE BROWSERS:
+   □ iOS Safari - Touch interactions, PWA install
+   □ Android Chrome - Notification permissions
+   □ Samsung Internet - Alternative mobile browser
+
+3. KEY FEATURES TO TEST:
+   □ Authentication flow
+   □ Form submissions
+   □ Charts and visualizations
+   □ PWA installation
+   □ Offline functionality
+   □ Notifications
+
+4. COMPATIBILITY NOTES:
+   • Safari requires user gesture for notifications
+   • Firefox has different PWA install flow
+   • Mobile browsers may have different viewport handling
+            `);
+        }
+        
+        async function loadTestScripts() {
+            // Check if test classes are already loaded
+            if (typeof AuthTestSuite !== 'undefined' && 
+                typeof ExpenseTestSuite !== 'undefined' && 
+                typeof PWATestSuite !== 'undefined' &&
+                typeof MasterTestRunner !== 'undefined') {
+                return;
+            }
+            
+            // Load test scripts dynamically
+            const scripts = [
+                'auth-tests.js',
+                'expense-tests.js', 
+                'pwa-tests.js',
+                'master-test-runner.js'
+            ];
+            
+            for (const script of scripts) {
+                await loadScript(script);
+            }
+        }
+        
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Initialize the test interface
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 SmartSpendr Test Suite Loaded');
+            console.log('Click "Run All Tests" to start comprehensive testing');
+            
+            // Check if we're on the main app page
+            if (window.location.pathname !== '/test-scripts/index.html') {
+                console.log('💡 Tip: Navigate to your SmartSpendr app and run tests there for full functionality');
+            }
+        });
+    </script>
+</body>
+</html>
